@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Who needs flowers when you can code them? ❤️</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Who needs flowers when you can code them?</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,134 +13,605 @@
     }
 
     body {
-      background-color: #050505;
+      background-color: #030305;
       color: #ffffff;
-      font-family: 'Courier New', Courier, monospace;
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 1rem;
-      overflow-x: hidden;
+      overflow: hidden;
       position: relative;
-    }
-
-    /* Funkelnder Sternenhintergrund */
-    .space-bg {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 0;
-      pointer-events: none;
+      user-select: none;
     }
 
     header {
       text-align: center;
-      z-index: 2;
-      margin-top: 1rem;
+      z-index: 10;
+      padding: 1.4rem 1rem 0.2rem;
+      pointer-events: none;
     }
 
     h1 {
       font-family: Georgia, "Times New Roman", serif;
-      font-style: italic;
-      font-size: clamp(1.4rem, 4vw, 2.2rem);
       font-weight: normal;
-      color: #fff5f7;
-      text-shadow: 0 0 10px rgba(255, 182, 193, 0.4);
-      letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
+      font-size: clamp(1.65rem, 5.5vw, 2.7rem);
+      line-height: 1.18;
+      color: #ffffff;
+      text-shadow: 0 0 18px rgba(255, 220, 230, 0.35);
+      letter-spacing: 0.01em;
     }
 
-    .subtitle {
-      font-size: 0.75rem;
-      color: #f472b6;
-      opacity: 0.8;
+    .hint {
+      margin-top: 0.45rem;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
+      color: rgba(253, 164, 175, 0.7);
     }
 
-    .canvas-container {
-      position: relative;
-      width: 100%;
-      max-width: 440px;
-      aspect-ratio: 3/4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    #canvas-wrap {
+      position: fixed;
+      inset: 0;
       z-index: 1;
-      margin: 0.5rem 0;
+      cursor: grab;
+    }
+
+    #canvas-wrap:active {
+      cursor: grabbing;
     }
 
     canvas {
       width: 100%;
       height: 100%;
       display: block;
-      filter: drop-shadow(0 0 15px rgba(244, 63, 94, 0.2));
     }
 
-    /* Interaktive Nachrichtenkarten */
     .note-card {
-      width: 100%;
-      max-width: 400px;
-      min-height: 80px;
-      background: rgba(10, 10, 12, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px dashed rgba(244, 63, 94, 0.4);
-      border-radius: 12px;
-      padding: 1rem;
+      position: relative;
+      z-index: 10;
+      width: calc(100% - 2rem);
+      max-width: 420px;
+      margin-bottom: 1.4rem;
+      padding: 0.9rem 1.2rem;
+      background: rgba(10, 10, 14, 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 182, 193, 0.22);
+      border-radius: 14px;
       text-align: center;
-      box-shadow: 0 0 20px rgba(244, 63, 94, 0.1);
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
+      pointer-events: none;
     }
 
     .note-text {
-      font-size: 0.95rem;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1rem;
       line-height: 1.4;
-      color: #fda4af;
-      text-shadow: 0 0 4px rgba(253, 164, 175, 0.3);
+      color: #ffe4e6;
       transition: opacity 0.25s ease;
     }
 
-    .note-counter {
-      margin-top: 0.5rem;
-      font-size: 0.65rem;
-      color: #9d174d;
-      letter-spacing: 0.1em;
+    .note-sub {
+      margin-top: 0.35rem;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.68rem;
+      color: #f472b6;
+      opacity: 0.85;
     }
   </style>
 </head>
 <body>
 
-  <div class="space-bg" id="spaceBg"></div>
-
   <header>
-    <h1 id="titleText">Who needs flowers when you can code them?</h1>
-    <p class="subtitle" id="subtitleText">Tap on the Lily bouquet</p>
+    <h1 id="titleText">Who needs flowers<br>when you can code them?</h1>
+    <p class="hint">Drag to rotate 3D • Tap a lily</p>
   </header>
 
-  <div class="canvas-container">
-    <canvas id="lilyCanvas"></canvas>
+  <div id="canvas-wrap">
+    <canvas id="scene"></canvas>
   </div>
 
-  <div class="note-card" id="noteCard">
-    <p class="note-text" id="noteText">A bouquet of digital lilies that will bloom forever. 🌌</p>
-    <span class="note-counter" id="noteCounter">Tap on a blossom to explore the code...</span>
+  <div class="note-card">
+    <p class="note-text" id="noteText">A 3D bouquet coded just for you — it will never wilt. ✨</p>
+    <p class="note-sub" id="noteSub">0 / 9 lilies discovered</p>
   </div>
 
   <script>
     // ==========================================
-    // KONFIGURATION – Customize your messages here!
+    // CONFIGURATION – Customize your messages!
     // ==========================================
     const CONFIG = {
-      title: "Who needs flowers when you can code them? ❤️",
-      subtitle: "Tap on the digital lilies",
-      startText: "A bouquet of digital lilies that will bloom forever. 🌌",
-      allDiscoveredText: "You decoded every single bloom — I love you endlessly! 💖",
+      startText: "A 3D bouquet coded just for you — it will never wilt. ✨",
+      allFoundText: "You discovered every lily in the bouquet — I love you! ❤️",
       messages: [
-        "🌸 Red Lily: 'For the warmth and passion you bring to my life everyday
+        "Crimson Lily: You are the beating heart of my world. ❤️",
+        "Magenta Lily: Every day with you feels bright and alive. 💖",
+        "Ivory Lily: Thank you for your kindness, warmth, and grace. 🤍",
+        "Peach Gold Lily: Your smile lights up even my darkest days. ✨",
+        "Golden Lily: You bring pure sunshine into my life. 💛",
+        "Plum Lily: Loving you is my favorite adventure. 💜",
+        "Blush Lily: I’m endlessly grateful to have you by my side. 🌸",
+        "Coral Lily: Here’s to all the memories we still get to make. 🌷",
+        "Amber Lily: Just a reminder that I’m thinking of you right now. 💫"
+      ]
+    };
+
+    const canvas = document.getElementById("scene");
+    const ctx = canvas.getContext("2d");
+    const noteTextEl = document.getElementById("noteText");
+    const noteSubEl = document.getElementById("noteSub");
+    noteTextEl.textContent = CONFIG.startText;
+
+    let width = 0;
+    let height = 0;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    // 3D Vector rotation helpers
+    function rotate3D(x, y, z, pitch, yaw, roll) {
+      // Roll (Z)
+      let x1 = x * Math.cos(roll) - y * Math.sin(roll);
+      let y1 = x * Math.sin(roll) + y * Math.cos(roll);
+      let z1 = z;
+
+      // Pitch (X)
+      let y2 = y1 * Math.cos(pitch) - z1 * Math.sin(pitch);
+      let z2 = y1 * Math.sin(pitch) + z1 * Math.cos(pitch);
+      let x2 = x1;
+
+      // Yaw (Y)
+      let x3 = x2 * Math.cos(yaw) + z2 * Math.sin(yaw);
+      let z3 = -x2 * Math.sin(yaw) + z2 * Math.cos(yaw);
+      let y3 = y2;
+
+      return { x: x3, y: y3, z: z3 };
+    }
+
+    const points = [];
+    const flowerCenters = [];
+
+    // Color palettes matching the glowing ASCII lily aesthetic
+    const PALETTES = {
+      crimson: { h: 352, s: 88, lBase: 36, lTip: 56, throatH: 42 },
+      magenta: { h: 318, s: 85, lBase: 42, lTip: 66, throatH: 48 },
+      ivory:   { h: 42,  s: 45, lBase: 55, lTip: 84, throatH: 36 },
+      peach:   { h: 24,  s: 85, lBase: 46, lTip: 74, throatH: 15 },
+      gold:    { h: 48,  s: 92, lBase: 44, lTip: 68, throatH: 28 },
+      plum:    { h: 332, s: 78, lBase: 26, lTip: 46, throatH: 350 },
+      blush:   { h: 342, s: 75, lBase: 52, lTip: 78, throatH: 45 },
+      coral:   { h: 12,  s: 86, lBase: 44, lTip: 68, throatH: 45 },
+      amber:   { h: 34,  s: 90, lBase: 40, lTip: 64, throatH: 18 }
+    };
+
+    const ASCII_CHARS = [".", ":", "+", "*", "#", "%", "@"];
+
+    // Build a 3D sculpted 6-petal lily
+    function create3DLily(opts) {
+      const { x, y, z, scale, pitch, yaw, roll, paletteKey, id } = opts;
+      const pal = PALETTES[paletteKey];
+
+      flowerCenters.push({ x, y, z, id, radius: scale * 0.95 });
+
+      const petalCount = 6;
+      const uSteps = 15; // along petal length
+      const vSteps = 7;  // across petal width
+
+      for (let p = 0; p < petalCount; p++) {
+        const petalAngle = (p * Math.PI * 2) / petalCount + (p % 2) * 0.08;
+        const layerOffset = (p % 2) * 0.14; // inner vs outer petals
+
+        for (let ui = 1; ui <= uSteps; ui++) {
+          const u = ui / uSteps;
+          // Graceful pointed lily petal silhouette
+          const widthProfile = Math.sin(Math.pow(u, 0.72) * Math.PI) * (0.34 * scale);
+
+          for (let vi = -vSteps; vi <= vSteps; vi++) {
+            const v = vi / vSteps;
+            // Slightly denser near edges and midrib
+            if (Math.abs(v) < 0.85 && (ui + Math.abs(vi)) % 2 === 1) continue;
+
+            const rLen = u * scale;
+            const localX = rLen;
+            const localY = v * widthProfile;
+            // Trumpet cup + graceful backward recurve at the petal tips
+            const cup = Math.sin(u * Math.PI * 0.85) * (0.32 * scale);
+            const recurve = Math.pow(u, 2.3) * (0.38 * scale);
+            const midribFold = (1 - Math.abs(v)) * 0.06 * scale;
+            const localZ = cup - recurve + midribFold + layerOffset * scale * 0.15;
+
+            // Rotate petal around flower center
+            const px = localX * Math.cos(petalAngle) - localY * Math.sin(petalAngle);
+            const py = localX * Math.sin(petalAngle) + localY * Math.cos(petalAngle);
+            const pz = localZ;
+
+            // Orient flower in 3D bouquet space
+            const world = rotate3D(px, py, pz, pitch, yaw, roll);
+
+            // Shading & color gradient from throat to tip
+            const isThroat = u < 0.32;
+            const isMidrib = Math.abs(v) < 0.22;
+            const hue = isThroat ? pal.throatH : pal.h + (v * 8);
+            const sat = isThroat ? 90 : pal.s;
+            let light = pal.lBase + u * (pal.lTip - pal.lBase);
+            if (isMidrib) light += 6;
+            if (Math.abs(v) > 0.85) light += 8;
+
+            const charIdx = Math.min(
+              ASCII_CHARS.length - 1,
+              Math.floor((0.25 + u * 0.55 + (1 - Math.abs(v)) * 0.25) * ASCII_CHARS.length)
+            );
+
+            points.push({
+              x: x + world.x,
+              y: y + world.y,
+              z: z + world.z,
+              h: hue,
+              s: sat,
+              l: Math.min(88, light),
+              char: ASCII_CHARS[charIdx],
+              flowerId: id,
+              isStem: false
+            });
+          }
+        }
+      }
+
+      // 3D Stamens & glowing anthers in the center of each lily
+      for (let s = 0; s < 6; s++) {
+        const sa = (s * Math.PI * 2) / 6 + 0.3;
+        for (let t = 0.15; t <= 0.62; t += 0.12) {
+          const sx = Math.cos(sa) * (t * scale * 0.45);
+          const sy = Math.sin(sa) * (t * scale * 0.45);
+          const sz = t * scale * 0.52;
+          const world = rotate3D(sx, sy, sz, pitch, yaw, roll);
+          const isTip = t > 0.5;
+          points.push({
+            x: x + world.x,
+            y: y + world.y,
+            z: z + world.z,
+            h: isTip ? 38 : 85,
+            s: 95,
+            l: isTip ? 72 : 55,
+            char: isTip ? "@" : "|",
+            flowerId: id,
+            isStem: false
+          });
+        }
+      }
+
+      // 3D Stem going down to the bouquet tie point (0, 145, 0)
+      const stemSteps = 22;
+      for (let i = 1; i <= stemSteps; i++) {
+        const t = i / stemSteps;
+        const sx = x * (1 - t * 0.78);
+        const sy = y + (148 - y) * t;
+        const sz = z * (1 - t * 0.78);
+        points.push({
+          x: sx,
+          y: sy,
+          z: sz,
+          h: 118,
+          s: 72,
+          l: 28 + (1 - t) * 14,
+          char: i % 2 === 0 ? "|" : "/",
+          flowerId: -1,
+          isStem: true
+        });
+      }
+    }
+
+    // Build 3D foliage leaves around the lower stems
+    function create3DFoliage() {
+      const leafCount = 18;
+      for (let l = 0; l < leafCount; l++) {
+        const angle = (l / leafCount) * Math.PI * 2;
+        const startY = 55 + (l % 3) * 22;
+        const leafLen = 65 + (l % 4) * 14;
+        const tilt = 0.45 + (l % 3) * 0.16;
+
+        for (let u = 0.05; u <= 1; u += 0.065) {
+          const w = Math.sin(u * Math.PI) * 11;
+          for (let v = -1; v <= 1; v += 0.5) {
+            const r = 14 + Math.sin(u * Math.PI * 0.85) * leafLen * tilt;
+            const lx = Math.cos(angle) * r - Math.sin(angle) * (v * w);
+            const lz = Math.sin(angle) * r + Math.cos(angle) * (v * w);
+            const ly = startY + (u - 0.35) * leafLen * 0.85;
+
+            points.push({
+              x: lx,
+              y: ly,
+              z: lz,
+              h: 112 + (l % 4) * 7,
+              s: 78,
+              l: 26 + u * 24,
+              char: Math.abs(v) > 0.6 ? "/" : "#",
+              flowerId: -1,
+              isStem: true
+            });
+          }
+        }
+      }
+    }
+
+    // Assemble the full 3D Bouquet Dome (arranged so all angles look lush)
+    const BOUQUET_LAYOUT = [
+      { x:   0, y: -72, z:  42, scale: 54, pitch: -0.35, yaw:  0.0,  roll: 0.1, paletteKey: "crimson" },
+      { x: -46, y: -22, z:  52, scale: 52, pitch: -0.10, yaw: -0.55, roll: 0.3, paletteKey: "magenta" },
+      { x:  46, y: -14, z:  48, scale: 53, pitch: -0.05, yaw:  0.55, roll: 0.2, paletteKey: "ivory"   },
+      { x:   2, y:  28, z:  64, scale: 54, pitch:  0.22, yaw:  0.05, roll: 0.4, paletteKey: "peach"   },
+      { x: -64, y: -62, z:  -8, scale: 46, pitch: -0.25, yaw: -1.15, roll: 0.2, paletteKey: "gold"    },
+      { x:  68, y: -38, z: -12, scale: 48, pitch: -0.15, yaw:  1.15, roll: 0.5, paletteKey: "plum"    },
+      { x: -34, y: -96, z: -32, scale: 45, pitch: -0.45, yaw: -2.35, roll: 0.1, paletteKey: "blush"   },
+      { x:  38, y: -88, z: -36, scale: 45, pitch: -0.42, yaw:  2.35, roll: 0.3, paletteKey: "coral"   },
+      { x:   0, y: -26, z: -58, scale: 50, pitch: -0.12, yaw:  3.14, roll: 0.2, paletteKey: "amber"   }
+    ];
+
+    BOUQUET_LAYOUT.forEach((cfg, idx) => create3DLily({ ...cfg, id: idx }));
+    create3DFoliage();
+
+    // Ambient 3D stars floating in space
+    const stars = Array.from({ length: 140 }, () => ({
+      x: (Math.random() - 0.5) * 700,
+      y: (Math.random() - 0.5) * 700,
+      z: (Math.random() - 0.5) * 700,
+      size: Math.random() * 1.4 + 0.5,
+      twinkle: Math.random() * Math.PI * 2
+    }));
+
+    // Sparkle burst particles when tapping a flower
+    const bursts = [];
+    function spawnBurst(x3d, y3d, z3d, hue) {
+      for (let i = 0; i < 36; i++) {
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI;
+        const speed = 1.2 + Math.random() * 2.8;
+        bursts.push({
+          x: x3d,
+          y: y3d,
+          z: z3d,
+          vx: Math.sin(phi) * Math.cos(theta) * speed,
+          vy: Math.cos(phi) * speed,
+          vz: Math.sin(phi) * Math.sin(theta) * speed,
+          life: 1.0,
+          hue
+        });
+      }
+    }
+
+    // 3D Camera & Rotation state
+    let rotY = 0;
+    let rotX = 0.08;
+    let velY = 0.0065; // Continuous smooth 3D spin
+    let isDragging = false;
+    let lastX = 0;
+    let lastY = 0;
+    let dragDistance = 0;
+
+    const discovered = new Set();
+    let highlightedFlower = -1;
+    let lastProjectedCenters = [];
+
+    // Pointer / Touch controls for 360° manual rotation + tap detection
+    const wrap = document.getElementById("canvas-wrap");
+
+    wrap.addEventListener("pointerdown", (e) => {
+      isDragging = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      dragDistance = 0;
+    });
+
+    window.addEventListener("pointermove", (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      dragDistance += Math.hypot(dx, dy);
+
+      rotY += dx * 0.0085;
+      rotX = Math.max(-0.55, Math.min(0.55, rotX + dy * 0.006));
+      velY = dx * 0.0025;
+
+      lastX = e.clientX;
+      lastY = e.clientY;
+    });
+
+    window.addEventListener("pointerup", (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+
+      // Resume gentle auto-rotation if user stopped moving
+      if (Math.abs(velY) < 0.003) {
+        velY = velY >= 0 ? 0.0065 : -0.0065;
+      }
+
+      // If it was a tap (not a drag), check which 3D lily was tapped
+      if (dragDistance < 10) {
+        handleTap(e.clientX, e.clientY);
+      }
+    });
+
+    function handleTap(clientX, clientY) {
+      let bestId = -1;
+      let bestScore = Infinity;
+
+      for (const fc of lastProjectedCenters) {
+        const d = Math.hypot(clientX - fc.sx, clientY - fc.sy);
+        if (d < fc.sr) {
+          // Prefer closer-to-camera lily if overlapping
+          const score = d + fc.z * 0.25;
+          if (score < bestScore) {
+            bestScore = score;
+            bestId = fc.id;
+          }
+        }
+      }
+
+      if (bestId !== -1) {
+        discovered.add(bestId);
+        highlightedFlower = bestId;
+
+        const fc = flowerCenters[bestId];
+        const pal = PALETTES[BOUQUET_LAYOUT[bestId].paletteKey];
+        spawnBurst(fc.x, fc.y, fc.z, pal.h);
+
+        noteTextEl.style.opacity = "0";
+        setTimeout(() => {
+          noteTextEl.textContent = CONFIG.messages[bestId];
+          noteTextEl.style.opacity = "1";
+        }, 140);
+
+        if (discovered.size === BOUQUET_LAYOUT.length) {
+          noteSubEl.textContent = CONFIG.allFoundText;
+        } else {
+          noteSubEl.textContent = `${discovered.size} / ${BOUQUET_LAYOUT.length} lilies discovered`;
+        }
+      }
+    }
+
+    // Main 60fps 3D Projection & Render Loop
+    let time = 0;
+    function render() {
+      time += 0.03;
+
+      if (!isDragging) {
+        rotY += velY;
+        // Gradually settle velocity back to smooth cruise speed
+        const targetVel = velY >= 0 ? 0.0065 : -0.0065;
+        velY += (targetVel - velY) * 0.03;
+      }
+
+      ctx.fillStyle = "#030305";
+      ctx.fillRect(0, 0, width, height);
+
+      const minDim = Math.min(width, height);
+      const baseScale = minDim / 340;
+      const fov = 460;
+      const centerX = width / 2;
+      const centerY = height * 0.51;
+
+      const cosY = Math.cos(rotY);
+      const sinY = Math.sin(rotY);
+      const cosX = Math.cos(rotX);
+      const sinX = Math.sin(rotX);
+
+      // 1. Render subtle 3D starfield
+      for (let i = 0; i < stars.length; i++) {
+        const st = stars[i];
+        const rx = st.x * cosY + st.z * sinY;
+        const rz = -st.x * sinY + st.z * cosY;
+        const scale = fov / (fov + rz + 380);
+        if (scale <= 0) continue;
+
+        const sx = centerX + rx * scale;
+        const sy = centerY + st.y * scale;
+        const alpha = 0.25 + 0.55 * (0.5 + 0.5 * Math.sin(time * 1.4 + st.twinkle));
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha.toFixed(2)})`;
+        ctx.fillRect(sx, sy, st.size, st.size);
+      }
+
+      // 2. Project flower centers for hit-testing
+      lastProjectedCenters = flowerCenters.map((fc) => {
+        const x1 = fc.x * cosY + fc.z * sinY;
+        const z1 = -fc.x * sinY + fc.z * cosY;
+        const y2 = fc.y * cosX - z1 * sinX;
+        const z2 = fc.y * sinX + z1 * cosX;
+        const p = (fov / (fov + z2 + 260)) * baseScale;
+        return {
+          id: fc.id,
+          sx: centerX + x1 * p,
+          sy: centerY + y2 * p,
+          sr: fc.radius * p,
+          z: z2
+        };
+      });
+
+      // 3. Project all 3D ASCII points
+      const projected = new Array(points.length);
+      for (let i = 0; i < points.length; i++) {
+        const pt = points[i];
+        // Subtle organic shimmer
+        const wave = Math.sin(time + pt.y * 0.05 + pt.x * 0.04) * 0.6;
+        const px = pt.x + wave;
+        const py = pt.y;
+        const pz = pt.z;
+
+        const x1 = px * cosY + pz * sinY;
+        const z1 = -px * sinY + pz * cosY;
+        const y2 = py * cosX - z1 * sinX;
+        const z2 = py * sinX + z1 * cosX;
+
+        const persp = (fov / (fov + z2 + 260)) * baseScale;
+
+        projected[i] = {
+          sx: centerX + x1 * persp,
+          sy: centerY + y2 * persp,
+          z: z2,
+          persp,
+          pt
+        };
+      }
+
+      // Depth-sort back-to-front (Painter's algorithm)
+      projected.sort((a, b) => b.z - a.z);
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      for (let i = 0; i < projected.length; i++) {
+        const item = projected[i];
+        if (item.persp <= 0) continue;
+
+        const { pt } = item;
+        // Depth cueing: closer characters are brighter and larger
+        const depthFade = Math.max(0.45, Math.min(1.2, 1 - item.z / 260));
+        const isActive = pt.flowerId === highlightedFlower;
+        const lightness = Math.min(94, pt.l * depthFade + (isActive ? 14 : 0));
+
+        const fontSize = Math.max(6, Math.round(9.5 * item.persp));
+        ctx.font = `bold ${fontSize}px "Courier New", Courier, monospace`;
+        ctx.fillStyle = `hsl(${pt.h}, ${pt.s}%, ${lightness}%)`;
+        ctx.fillText(pt.char, item.sx, item.sy);
+      }
+
+      // 4. Render 3D sparkle bursts
+      for (let i = bursts.length - 1; i >= 0; i--) {
+        const b = bursts[i];
+        b.x += b.vx;
+        b.y += b.vy;
+        b.z += b.vz;
+        b.life -= 0.022;
+
+        if (b.life <= 0) {
+          bursts.splice(i, 1);
+          continue;
+        }
+
+        const x1 = b.x * cosY + b.z * sinY;
+        const z1 = -b.x * sinY + b.z * cosY;
+        const y2 = b.y * cosX - z1 * sinX;
+        const z2 = b.y * sinX + z1 * cosX;
+        const persp = (fov / (fov + z2 + 260)) * baseScale;
+
+        ctx.fillStyle = `hsla(${b.hue}, 100%, 78%, ${b.life.toFixed(2)})`;
+        ctx.font = `bold ${Math.round(11 * persp)}px "Courier New", monospace`;
+        ctx.fillText("*", centerX + x1 * persp, centerY + y2 * persp);
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    render();
+  </script>
+</body>
+</html>
