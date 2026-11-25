@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Bouquet for You ❤️</title>
+  <style>
+    :root {
+      --bg-top: #fff5f7;
+      --bg-bottom: #ffe4e6;
+      --text-main: #4c0519;
+      --text-muted: #881337;
+      --card-bg: rgba(255, 255, 255, 0.78);
+      --accent: #e11d48;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 1rem 2rem;
+      background: linear-gradient(165deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text-main);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    header {
+      text-align: center;
+      z-index: 2;
+      animation: fadeDown 1s ease-out;
+    }
+
+    h1 {
+      font-size: clamp(1.7rem, 5vw, 2.4rem);
+      font-weight: normal;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .subtitle {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      opacity: 0.85;
+    }
+
+    .bouquet-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 390px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+      margin: 0.5rem 0;
+    }
+
+    svg#bouquet {
+      width: 100%;
+      height: auto;
+      overflow: visible;
+      filter: drop-shadow(0 18px 28px rgba(136, 19, 55, 0.16));
+      animation: gentleSway 5s ease-in-out infinite;
+      transform-origin: 200px 440px;
+    }
+
+    .flower {
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+    }
+
+    .flower:hover,
+    .flower.active {
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.95));
+    }
+
+    .flower.pop {
+      animation: popFlower 0.45s ease;
+    }
+
+    .ribbon {
+      cursor: pointer;
+      transition: transform 0.25s ease;
+      transform-origin: 200px 312px;
+    }
+
+    .ribbon:hover {
+      transform: scale(1.06);
+    }
+
+    .note-card {
+      width: 100%;
+      max-width: 400px;
+      min-height: 92px;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 1.1rem 1.4rem;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(159, 18, 57, 0.08);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .note-text {
+      font-size: 1.1rem;
+      line-height: 1.45;
+      color: var(--text-main);
+      transition: opacity 0.25s ease;
+    }
+
+    .note-counter {
+      margin-top: 0.45rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      opacity: 0.75;
+    }
+
+    /* Falling petals */
+    .petal {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 1;
+      border-radius: 150% 0 150% 0;
+      opacity: 0.8;
+      animation: fall linear forwards;
+    }
+
+    @keyframes gentleSway {
+      0%, 100% { transform: rotate(-1.4deg); }
+      50% { transform: rotate(1.4deg); }
+    }
+
+    @keyframes popFlower {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.13); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(105vh) rotate(540deg) translateX(40px);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="titleText">For You ❤️</h1>
+    <p class="subtitle" id="subtitleText">Tap on a flower in the bouquet</p>
+  </header>
+
+  <div class="bouquet-wrapper">
+    <svg id="bouquet" viewBox="0 0 400 470" xmlns="http://www.w3.org/2000/svg" aria-label="Digital flower bouquet">
+      <defs>
+        <linearGradient id="paperBack" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f3d5b5" />
+          <stop offset="100%" stop-color="#d4a373" />
+        </linearGradient>
+        <linearGradient id="paperFrontLeft" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#faedcd" />
+          <stop offset="100%" stop-color="#e6ccb2" />
+        </linearGradient>
+        <linearGradient id="paperFrontRight" x1="1" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f5ebe0" />
+          <stop offset="100%" stop-color="#ddb892" />
+        </linearGradient>
+        <linearGradient id="crimsonRose" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#fb7185" />
+          <stop offset="100%" stop-color="#be123c" />
+        </linearGradient>
+        <linearGradient id="pinkRose" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#fda4af" />
+          <stop offset="100%" stop-color="#e11d48" />
+        </linearGradient>
+        <linearGradient id="deepPink" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f472b6" />
+          <stop offset="100%" stop-color="#9d174d" />
+        </linearGradient>
+        <linearGradient id="tulipGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fde047" />
+          <stop offset="100%" stop-color="#f97316" />
+        </linearGradient>
+        <linearGradient id="tulipLilac" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#e9d5ff" />
+          <stop offset="100%" stop-color="#a855f7" />
+        </linearGradient>
+      </defs>
+
+      <!-- Back wrapping paper -->
+      <polygon points="200,115 78,185 200,455 322,185" fill="url(#paperBack)" />
+
+      <!-- Leaves & eucalyptus -->
+      <g fill="#4d7c0f" opacity="0.9">
+        <ellipse cx="105" cy="185" rx="28" ry="12" transform="rotate(-38 105 185)" />
+        <ellipse cx="295" cy="185" rx="28" ry="12" transform="rotate(38 295 185)" />
+        <ellipse cx="132" cy="145" rx="24" ry="10" transform="rotate(-55 132 145)" fill="#65a30d" />
+        <ellipse cx="268" cy="145" rx="24" ry="10" transform="rotate(55 268 145)" fill="#65a30d" />
+        <ellipse cx="175" cy="122" rx="22" ry="9" transform="rotate(-75 175 122)" fill="#3f6212" />
+        <ellipse cx="225" cy="122" rx="22" ry="9" transform="rotate(75 225 122)" fill="#3f6212" />
+        <ellipse cx="100" cy="230" rx="26" ry="11" transform="rotate(-20 100 230)" fill="#3f6212" />
+        <ellipse cx="300" cy="230" rx="26" ry="11" transform="rotate(20 300 230)" fill="#3f6212" />
+      </g>
+
+      <!-- Stems -->
+      <g stroke="#3f6212" stroke-width="4.5" stroke-linecap="round">
+        <line x1="200" y1="120" x2="200" y2="335" />
+        <line x1="152" y1="142" x2="198" y2="335" />
+        <line x1="248" y1="142" x2="202" y2="335" />
+        <line x1="145" y1="198" x2="196" y2="335" />
+        <line x1="255" y1="198" x2="204" y2="335" />
+        <line x1="200" y1="180" x2="200" y2="335" />
+        <line x1="122" y1="242" x2="195" y2="335" />
+        <line x1="278" y1="242" x2="205" y2="335" />
+      </g>
+
+      <!-- Baby's breath -->
+      <g fill="#ffffff" opacity="0.92">
+        <circle cx="176" cy="156" r="4" /><circle cx="183" cy="150" r="3" />
+        <circle cx="224" cy="156" r="4" /><circle cx="217" cy="150" r="3" />
+        <circle cx="115" cy="212" r="4" /><circle cx="122" cy="205" r="3" />
+        <circle cx="285" cy="212" r="4" /><circle cx="278" cy="205" r="3" />
+        <circle cx="168" cy="232" r="3.5" /><circle cx="232" cy="232" r="3.5" />
+      </g>
+
+      <!-- FLOWER 1: Top Cherry Blossom -->
+      <g class="flower" data-index="0" transform="translate(200, 122)">
+        <circle cx="0" cy="-14" r="11" fill="#fecdd3" />
+        <circle cx="13" cy="-4" r="11" fill="#fda4af" />
+        <circle cx="8" cy="11" r="11" fill="#fecdd3" />
+        <circle cx="-8" cy="11" r="11" fill="#fda4af" />
+        <circle cx="-13" cy="-4" r="11" fill="#fecdd3" />
+        <circle cx="0" cy="0" r="6" fill="#fbbf24" />
+      </g>
+
+      <!-- FLOWER 2: Left Tulip (Gold/Peach) -->
+      <g class="flower" data-index="1" transform="translate(152, 142) rotate(-14)">
+        <path d="M-18,-8 C-18,-26 -6,-30 0,-18 C6,-30 18,-26 18,-8 C18,12 10,20 0,20 C-10,20 -18,12 -18,-8 Z" fill="url(#tulipGold)" />
+        <path d="M-6,-22 C-2,-12 2,-12 6,-22 C4,-5 2,12 0,20 C-2,12 -4,-5 -6,-22 Z" fill="#fef08a" opacity="0.65" />
+      </g>
+
+      <!-- FLOWER 3: Right Tulip (Lilac) -->
+      <g class="flower" data-index="2" transform="translate(248, 142) rotate(14)">
+        <path d="M-18,-8 C-18,-26 -6,-30 0,-18 C6,-30 18,-26 18,-8 C18,12 10,20 0,20 C-10,20 -18,12 -18,-8 Z" fill="url(#tulipLilac)" />
+        <path d="M-6,-22 C-2,-12 2,-12 6,-22 C4,-5 2,12 0,20 C-2,12 -4,-5 -6,-22 Z" fill="#f3e8ff" opacity="0.65" />
+      </g>
+
+      <!-- FLOWER 4: Left Rose -->
+      <g class="flower" data-index="3" transform="translate(142, 198)">
+        <circle cx="0" cy="0" r="26" fill="url(#pinkRose)" />
+        <path d="M-16,-6 C-12,-20 12,-20 16,-6 C20,8 8,18 -4,16 C-14,14 -18,4 -16,-6 Z" fill="#f43f5e" />
+        <path d="M-9,-3 C-6,-11 6,-11 9,-3 C11,5 4,10 -2,9 C-8,8 -10,2 -9,-3 Z" fill="#fecdd3" opacity="0.55" />
+        <circle cx="0" cy="0" r="4" fill="#be123c" />
+      </g>
+
+      <!-- FLOWER 5: Right Rose -->
+      <g class="flower" data-index="4" transform="translate(258, 198)">
+        <circle cx="0" cy="0" r="26" fill="url(#deepPink)" />
+        <path d="M-16,-6 C-12,-20 12,-20 16,-6 C20,8 8,18 -4,16 C-14,14 -18,4 -16,-6 Z" fill="#be185d" />
+        <path d="M-9,-3 C-6,-11 6,-11 9,-3 C11,5 4,10 -2,9 C-8,8 -10,2 -9,-3 Z" fill="#fbcfe8" opacity="0.55" />
+        <circle cx="0" cy="0" r="4" fill="#831843" />
+      </g>
+
+      <!-- FLOWER 6: Center Main Rose -->
+      <g class="flower" data-index="5" transform="translate(200, 182)">
+        <circle cx="0" cy="0" r="32" fill="url(#crimsonRose)" />
+        <path d="M-21,-8 C-16,-25 16,-25 21,-8 C25,10 10,22 -5,20 C-18,18 -23,5 -21,-8 Z" fill="#e11d48" />
+        <path d="M-12,-5 C-8,-15 8,-15 12,-5 C14,6 5,13 -3,12 C-10,10 -14,3 -12,-5 Z" fill="#fda4af" opacity="0.5" />
+        <path d="M-5,-2 C-3,-7 4,-7 5,-2 C6,3 2,6 -2,5 C-5,4 -6,1 -5,-2 Z" fill="#9f1239" />
+      </g>
+
+      <!-- FLOWER 7: Left Daisy -->
+      <g class="flower" data-index="6" transform="translate(120, 242)">
+        <g fill="#ffffff">
+          <ellipse cx="0" cy="-14" rx="5" ry="10" />
+          <ellipse cx="0" cy="14" rx="5" ry="10" />
+          <ellipse cx="-14" cy="0" rx="10" ry="5" />
+          <ellipse cx="14" cy="0" rx="10" ry="5" />
+          <ellipse cx="-10" cy="-10" rx="5" ry="10" transform="rotate(-45 -10 -10)" />
+          <ellipse cx="10" cy="10" rx="5" ry="10" transform="rotate(-45 10 10)" />
+          <ellipse cx="10" cy="-10" rx="5" ry="10" transform="rotate(45 10 -10)" />
+          <ellipse cx="-10" cy="10" rx="5" ry="10" transform="rotate(45 -10 10)" />
+        </g>
+        <circle cx="0" cy="0" r="7.5" fill="#facc15" />
+      </g>
+
+      <!-- FLOWER 8: Right Daisy -->
+      <g class="flower" data-index="7" transform="translate(280, 242)">
+        <g fill="#ffffff">
+          <ellipse cx="0" cy="-14" rx="5" ry="10" />
+          <ellipse cx="0" cy="14" rx="5" ry="10" />
+          <ellipse cx="-14" cy="0" rx="10" ry="5" />
+          <ellipse cx="14" cy="0" rx="10" ry="5" />
+          <ellipse cx="-10" cy="-10" rx="5" ry="10" transform="rotate(-45 -10 -10)" />
+          <ellipse cx="10" cy="10" rx="5" ry="10" transform="rotate(-45 10 10)" />
+          <ellipse cx="10" cy="-10" rx="5" ry="10" transform="rotate(45 10 -10)" />
+          <ellipse cx="-10" cy="10" rx="5" ry="10" transform="rotate(45 -10 10)" />
+        </g>
+        <circle cx="0" cy="0" r="7.5" fill="#facc15" />
+      </g>
+
+      <!-- Front folded wrapping paper -->
+      <polygon points="86,225 200,312 200,455 138,358" fill="url(#paperFrontLeft)" />
+      <polygon points="314,225 200,312 200,455 262,358" fill="url(#paperFrontRight)" />
+
+      <!-- Ribbon (clickable for petal shower) -->
+      <g class="ribbon" id="ribbonBtn">
+        <path d="M196,314 L168,368 L182,364 L200,318 Z" fill="#be123c" />
+        <path d="M204,314 L232,368 L218,364 L200,318 Z" fill="#be123c" />
+        <path d="M200,312 C172,290 156,312 176,324 C188,330 196,318 200,312 Z" fill="#e11d48" />
+        <path d="M200,312 C228,290 244,312 224,324 C212,330 204,318 200,312 Z" fill="#e11d48" />
+        <rect x="193" y="305" width="14" height="14" rx="5" fill="#9f1239" />
+      </g>
+    </svg>
+  </div>
+
+  <div class="note-card" id="noteCard">
+    <p class="note-text" id="noteText">A little bouquet that will never wilt. ✨</p>
+    <span class="note-counter" id="noteCounter">0 / 8 flowers discovered</span>
+  </div>
+
+  <script>
+    // ==========================================
+    // CONFIGURATION – Customize your texts here!
+    // ==========================================
+    const CONFIG = {
+      title: "For You ❤️", // e.g. "For Sarah ❤️"
+      subtitle: "Tap on the flowers in the bouquet",
+      startText: "A little bouquet that will never wilt. ✨",
+      allDiscoveredText: "You found every flower — I love you endlessly! ❤️",
+      messages: [
+        "For your gorgeous smile that brightens every single day. ☀️",
+        "Thank you for always being there for me. 💛",
+        "You are my favorite person in the world. 💜",
+        "For all the wonderful memories we still have ahead of us. 🌸",
+        "I’m so lucky to have you in my life. 💖",
+        "This rose is for you — because you’re truly one of a kind. 🌹",
+        "You bring so much peace and joy into my life. 🌼",
+        "Just because I was thinking about you right now. ✨"
+      ]
+    };
+
+    // Initialization
+    document.getElementById("titleText").textContent = CONFIG.title;
+    document.getElementById("subtitleText").textContent = CONFIG.subtitle;
+    const noteTextEl = document.getElementById("noteText");
+    const noteCounterEl = document.getElementById("noteCounter");
+    noteTextEl.textContent = CONFIG.startText;
+
+    const flowers = document.querySelectorAll(".flower");
+    const discovered = new Set();
+
+    function spawnPetals(count = 10) {
+      const colors = ["#fda4af", "#fb7185", "#fecdd3", "#f43f5e", "#fde047"];
+      for (let i = 0; i < count; i++) {
+        const petal = document.createElement("div");
+        petal.className = "petal";
+        const size = Math.random() * 10 + 8;
+        petal.style.width = `${size}px`;
+        petal.style.height = `${size * 0.75}px`;
+        petal.style.left = `${Math.random() * 100}vw`;
+        petal.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        petal.style.animationDuration = `${Math.random() * 2.5 + 2.5}s`;
+        document.body.appendChild(petal);
+        setTimeout(() => petal.remove(), 5200);
+      }
+    }
+
+    flowers.forEach((flower) => {
+      flower.addEventListener("click", () => {
+        const idx = Number(flower.dataset.index);
+        discovered.add(idx);
+
+        // Restart pop animation
+        flower.classList.remove("pop");
+        void flower.offsetWidth;
+        flower.classList.add("pop");
+
+        // Smoothly fade in message
+        noteTextEl.style.opacity = "0";
+        setTimeout(() => {
+          noteTextEl.textContent = CONFIG.messages[idx];
+          noteTextEl.style.opacity = "1";
+        }, 150);
+
+        if (discovered.size === flowers.length) {
+          noteCounterEl.textContent = CONFIG.allDiscoveredText;
+          spawnPetals(22);
+        } else {
+          noteCounterEl.textContent = `${discovered.size} / ${flowers.length} flowers discovered`;
+          spawnPetals(6);
+        }
+      });
+    });
+
+    // Tapping the ribbon triggers a shower of petals
+    document.getElementById("ribbonBtn").addEventListener("click", () => {
+      spawnPetals(18);
+    });
+
+    // Gentle petal shower on page load
+    window.addEventListener("load", () => spawnPetals(12));
+  </script>
+</body>
+</html>
